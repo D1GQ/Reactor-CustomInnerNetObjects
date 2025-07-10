@@ -103,10 +103,15 @@ public sealed class IgnoreInnerNetObjectAttribute : Attribute
             if (!_registeredPrefabs.Contains(prefabFullName))
             {
                 _registeredPrefabs.Add(prefabFullName);
+
                 if (prefab is InnerNetObject netObj)
+                {
                     AddInnerNetObject(netObj);
+                }
                 else if (prefab is GameObject gameObj)
+                {
                     AddInnerNetObject(gameObj);
+                }
             }
             else
             {
