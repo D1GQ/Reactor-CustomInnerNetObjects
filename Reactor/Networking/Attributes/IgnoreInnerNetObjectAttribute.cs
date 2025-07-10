@@ -15,6 +15,7 @@ namespace Reactor.Networking.Attributes;
 [AttributeUsage(AttributeTargets.Class)]
 public sealed class IgnoreInnerNetObjectAttribute : Attribute
 {
+    private static readonly HashSet<string> _registeredPrefabs = new();
     private static readonly HashSet<Assembly> _registeredAssemblies = new();
     private static readonly List<(string AssemblyName, MemberInfo Member)> _registeredMembers = new();
 
@@ -91,17 +92,26 @@ public sealed class IgnoreInnerNetObjectAttribute : Attribute
 
         foreach (var prefabMember in orderedMembers)
         {
+            var prefabFullName = $"{prefabMember.DeclaringType?.FullName}.{prefabMember.Name}";
             var prefab = await GetPrefabAsync(prefabMember);
             if (prefab == null)
             {
-                Warning($"Prefab for {prefabMember.DeclaringType?.FullName}.{prefabMember.Name} is null.");
+                Warning($"Prefab for {prefabFullName} is null.");
                 continue;
             }
 
-            if (prefab is InnerNetObject netObj)
-                AddInnerNetObject(netObj);
-            else if (prefab is GameObject gameObj)
-                AddInnerNetObject(gameObj);
+            if (!_registeredPrefabs.Contains(prefabFullName))
+            {
+                _registeredPrefabs.Add(prefabFullName);
+                if (prefab is InnerNetObject netObj)
+                    AddInnerNetObject(netObj);
+                else if (prefab is GameObject gameObj)
+                    AddInnerNetObject(gameObj);
+            }
+            else
+            {
+                Warning($"Prefab {prefabFullName} has already been registered, which shouldn't be possible but indicates there is a duplicate...");
+            }
         }
     }
 
