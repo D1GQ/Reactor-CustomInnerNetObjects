@@ -20,7 +20,7 @@ public sealed class IgnoreInnerNetObjectAttribute : Attribute
     private static readonly List<(string AssemblyName, MemberInfo Member)> _registeredMembers = new();
 
     /// <summary>
-    /// Registers all <see cref="InnerNetObject"/>s annotated with out <see cref="IgnoreInnerNetObjectAttribute"/> in the specified <paramref name="assembly"/>.
+    /// Registers all <see cref="InnerNetObject"/>s annotated without <see cref="IgnoreInnerNetObjectAttribute"/> in the specified <paramref name="assembly"/>.
     /// </summary>
     /// <remarks>This is called automatically on plugin assemblies so you probably don't need to call this.</remarks>
     /// <param name="assembly">The assembly to search.</param>
